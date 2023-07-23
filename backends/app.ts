@@ -9,6 +9,7 @@ const url: string = process.env.MONGO_URL;
 const api: string = process.env.API_ROUTE;
 import categoryRoute from "./src/routes/category.routes";
 import productRoute from "./src/routes/product.routes";
+import userRoute from "./src/routes/user.routes";
 const app = express();
 
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use(morgan("tiny"));
 
 app.use(`${api}/category`, categoryRoute);
 app.use(`${api}/products`, productRoute);
+app.use(`${api}/user`, userRoute);
 
 app.listen(port, () => {
   Logging.info(`App running on port:${port}`);
