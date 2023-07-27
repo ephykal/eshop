@@ -50,6 +50,14 @@ const createProduct = async (req: Request, res: Response) => {
 
   const id: string = req.body.category;
   try {
+    const file = req.file;
+    if (!file) return res.status(400).send("No image in the request");
+    Logging.info(file);
+    const fileName: string = req.file.filename;
+    const basePath: string = `${req.protocol}://${req.get(
+      "host"
+    )}/public/uploads/`;
+
     const existingCategory: ICategory | null = await Category.findById(id);
     if (!existingCategory)
       return res.status(400).json({ message: "Invalid category ID" });
@@ -58,7 +66,7 @@ const createProduct = async (req: Request, res: Response) => {
       name,
       description,
       richDescription,
-      image,
+      image: `${basePath}${fileName}`,
       images,
       brand,
       price,
@@ -75,6 +83,38 @@ const createProduct = async (req: Request, res: Response) => {
     return res.status(400).json({
       message: "An error occurred while creating new prouct",
       err: error.message,
+    });
+  }
+};
+
+const productImagesUpdate = async (req: Request, res: Response) => {
+  const id: string = req.params.id;
+  const files = req.files;
+  const imagePath: any[] = [];
+  const basePath: string = `${req.protocol}://${req.get(
+    "host"
+  )}/public/uploads/`;
+
+  if (files) {
+    files.forEach((file) => {
+      imagePath.push(`${basePath}${file.filename}`);
+    });
+  }
+
+  try {
+    const product: IProduct | null = await Product.findByIdAndUpdate(
+      id,
+      { images: imagePath },
+      { new: true }
+    );
+    if (!product)
+      return res.status(400).json({ message: "Invalid product Id" });
+    return res.status(200).json(product);
+  } catch (e: any) {
+    Logging.error(e);
+    return res.status(400).json({
+      message: "An error occurred while updating product images",
+      err: e.message,
     });
   }
 };
@@ -189,4 +229,5 @@ export {
   deleteProduct,
   featuredProduct,
   productCount,
+  productImagesUpdate,
 };

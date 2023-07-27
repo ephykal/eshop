@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 interface IOrder extends Document {
-  orderItem: mongoose.Schema.Types.ObjectId[];
+  orderItems: mongoose.Schema.Types.ObjectId[];
   shippingAddress1: string;
   shippingAddress2: string;
   city: string;
@@ -15,7 +15,7 @@ interface IOrder extends Document {
 }
 
 const orderSchema: Schema<IOrder> = new Schema<IOrder>({
-  orderItem: [{ type: mongoose.Schema.Types.ObjectId, ref: "OrderItem" }],
+  orderItems: [{ type: mongoose.Schema.Types.ObjectId, ref: "OrderItem" }],
   shippingAddress1: { type: String, required: true },
   shippingAddress2: { type: String, required: false },
   city: { type: String, required: true },
